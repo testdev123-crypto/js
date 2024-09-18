@@ -1,0 +1,42 @@
+name: React CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # You can change this version if needed
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the React app 
+        run: |
+          npm run build
+
+      - name: Run tests
+        run: npm test
+
+      - name: Run SonarQube analysis
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=js \
+            -Dsonar.host.url=https://fc23-59-145-123-10.ngrok-free.app \
+            -Dsonar.login=sqp_5f0e07804da25cc8200e19dcfcb118ba7c914f4b \
+            -Dsonar.dependencyCheck.summarize=true \
+            -Dsonar.dependencyCheck.htmlReportPath=target/dependency-check-report.html
